@@ -34,7 +34,7 @@ abstract class ViewBase
     function __construct($viewdata, $requested_type = FALSE) {
         $this->viewdata = $viewdata;
 
-        if ($requested_type === FALSE) {
+        if ($requested_type === FALSE && isset($_GET['format'])) {
             $requested_type = $_GET['format'];
         }
 

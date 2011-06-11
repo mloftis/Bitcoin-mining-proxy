@@ -34,13 +34,13 @@ class PoolModel
     function __construct($form = FALSE)
     {
         if ($form !== FALSE) {
-            $this->id = $form['id'];
+            $this->id = @$form['id'];
 
-            $this->name = $form['name'];
-            $this->url = $form['url'];
-            $this->enabled = $form['enabled'];
+            $this->name = @$form['name'];
+            $this->url = @$form['url'];
+            $this->enabled = @$form['enabled'];
 
-            $this->worker_count = $form['worker_count'];
+            $this->worker_count = @$form['worker_count'];
 
             $this->canonize();
         }

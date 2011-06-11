@@ -207,7 +207,7 @@ class AdminWorkersController extends AdminController
 
     public function editPostView()
     {
-        return $this->newPostView();
+        return $this->newPostView(new WorkerModel($_POST));
     }
 }
 

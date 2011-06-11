@@ -174,7 +174,7 @@ function do_admin_auth() {
 
 function get_tempdata($key)
 {
-    $value = $_SESSION['tempdata'][$key];
+    $value = @$_SESSION['tempdata'][$key];
 
     unset($_SESSION['tempdata'][$key]);
 

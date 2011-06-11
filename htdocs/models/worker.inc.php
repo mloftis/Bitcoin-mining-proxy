@@ -31,7 +31,7 @@ class WorkerModel
     function __construct($form = FALSE)
     {
         if ($form !== FALSE) {
-            $this->id = $form['id'];
+            $this->id = @$form['id'];
 
             $this->name = $form['name'];
             $this->password = $form['password'];
