@@ -125,25 +125,20 @@ class WorkerPoolModel
             (pool_id, worker_id, pool_username, pool_password, priority, enabled)
                 VALUES
             (:pool_id, :worker_id, :pool_username, :pool_password, :priority, :enabled)
-
-            ON DUPLICATE KEY UPDATE
-                pool_username = :pool_username_two,
-                pool_password = :pool_password_two,
-                priority = :priority_two,
-                enabled = :enabled_two
         ');
 
         $result = $q->execute(array(
             ':pool_id'           => $this->pool_id,
             ':worker_id'         => $this->worker_id,
             ':pool_username'     => $this->pool_username,
-            ':pool_username_two' => $this->pool_username,
+//            ':pool_username_two' => $this->pool_username,
             ':pool_password'     => $this->pool_password,
-            ':pool_password_two' => $this->pool_password,
+//            ':pool_password_two' => $this->pool_password,
             ':priority'          => $this->priority,
-            ':priority_two'      => $this->priority,
+//            ':priority_two'      => $this->priority,
             ':enabled'           => $this->enabled,
-            ':enabled_two'       => $this->enabled));
+//            ':enabled_two'       => $this->enabled
+            ));
 
         return (boolean)$result;
     }

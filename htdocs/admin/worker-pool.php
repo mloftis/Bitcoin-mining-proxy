@@ -62,9 +62,9 @@ class AdminWorkerPoolController extends AdminController
                 wp.priority AS priority,
                 wp.enabled AS enabled,
 
-                p.id AS `pool-id`,
+                p.id AS "pool-id",
                 p.name AS pool,
-                p.enabled AS `pool-enabled`
+                p.enabled AS "pool-enabled"
 
             FROM pool p
 

@@ -43,7 +43,7 @@ class AdminPoolController extends AdminController
             LEFT OUTER JOIN worker_pool wp
             ON p.id = wp.pool_id
 
-            GROUP BY p.id
+            GROUP BY p.id,p.name,p.url,p.enabled
 
             ORDER BY p.name
         ');
@@ -107,26 +107,12 @@ class AdminPoolController extends AdminController
             $q = $pdo->prepare('
                 DELETE p
                 FROM pool p
+                WHERE p.id = :pool_id
 
-                LEFT OUTER JOIN (
-                    SELECT
-                        wp.pool_id AS pool_id,
-                        COUNT(wp.worker_id) AS workers
-
-                    FROM worker_pool wp
-
-                    GROUP BY wp.pool_id
-                ) wp
-
-                ON wp.pool_id = :pool_id
-
-                WHERE p.id = :pool_id_two
-                  AND (wp.workers = 0 OR wp.workers IS NULL)
             ');
 
             $q->execute(array(
-                ':pool_id'     => $pool->id,
-                ':pool_id_two' => $pool->id));
+                ':pool_id'     => $pool->id));
 
             if (!$q->rowCount()) {
                 $_SESSION['tempdata']['errors'][] = 'Pool still has workers; cannot delete.';

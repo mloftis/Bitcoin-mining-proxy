@@ -103,14 +103,13 @@ class PoolModel
             FROM pool p
 
             LEFT OUTER JOIN worker_pool wp
-            ON p.id = :pool_id
-
-            WHERE p.id = :pool_id_two
+            ON wp.pool_id = p.id
+            WHERE p.id = :pool_id
+            GROUP BY p.name,p.enabled,p.url
         ');
 
         if (!$q->execute(array(
-                ':pool_id'     => $id,
-                ':pool_id_two' => $id))) {
+                ':pool_id'     => $id))) {
             return FALSE;
         }
 

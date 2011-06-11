@@ -69,7 +69,7 @@ class AdminDashboardController extends AdminController
 
                 FROM submitted_work
 
-                WHERE result = 0
+                WHERE result = false
 
                 ORDER BY id DESC
 
@@ -122,7 +122,7 @@ class AdminDashboardController extends AdminController
                 INNER JOIN pool p
                     ON p.id = wd.pool_id
 
-                GROUP BY wd.worker_id
+                GROUP BY wd.worker_id, wd.time_requested, p.name
             ) worked
 
             ON worked.worker_id = w.id
@@ -142,18 +142,18 @@ class AdminDashboardController extends AdminController
 
                     FROM submitted_work
 
-                    WHERE result = 1
+                    WHERE result = true
 
                     GROUP BY worker_id
                 ) sw2
                     ON sw.worker_id = sw2.worker_id
-                   AND sw.result = 1
+                   AND sw.result = true
                    AND sw.time = sw2.latest
 
                 INNER JOIN pool p
                     ON p.id = sw.pool_id
 
-                GROUP BY sw.worker_id
+                GROUP BY sw.worker_id,sw.time,p.name
             ) submitted
 
             ON submitted.worker_id = w.id
@@ -165,7 +165,7 @@ class AdminDashboardController extends AdminController
                 FROM
                     submitted_work sw
                 WHERE
-                    time >= UTC_TIMESTAMP() - INTERVAL :average_interval_two SECOND
+                    time >= NOW() - \''.(int)$BTC_PROXY['average_interval'].'\'::INTERVAL
                 GROUP BY
                     sw.worker_id
             ) sli
@@ -173,8 +173,7 @@ class AdminDashboardController extends AdminController
 
             ORDER BY w.name
         ', array(
-            ':average_interval'     => $BTC_PROXY['average_interval'],
-            ':average_interval_two' => $BTC_PROXY['average_interval']
+            ':average_interval'     => $BTC_PROXY['average_interval']
         ));
 
         return new AdminDashboardView($viewdata);

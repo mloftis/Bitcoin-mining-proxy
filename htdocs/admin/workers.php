@@ -44,7 +44,7 @@ class AdminWorkersController extends AdminController
             LEFT OUTER JOIN worker_pool wp
             ON w.id = wp.worker_id
 
-            GROUP BY w.id
+            GROUP BY w.id,w.name,w.password
 
             ORDER BY name
         ');
@@ -148,17 +148,6 @@ class AdminWorkersController extends AdminController
         $q->closeCursor();
 
         $q = $pdo->prepare('
-            DELETE FROM worker WHERE id = :worker_id
-        ');
-
-        $q->execute(array(':worker_id' => $id));
-
-        if (!$q->rowCount()) {
-            $_SESSION['tempdata']['errors'][] = 'Worker not found.';
-            return new RedirectView('/admin/workers.php');
-        }
-
-        $q = $pdo->prepare('
             DELETE FROM submitted_work WHERE worker_id = :worker_id
         ');
 
@@ -169,6 +158,18 @@ class AdminWorkersController extends AdminController
         ');
 
         $q->execute(array(':worker_id' => $id));
+        // this MUST go last since we're using foreign keys now
+        // alternatively the other tables could be set ON DELETE CASCADE
+        $q = $pdo->prepare('
+            DELETE FROM worker WHERE id = :worker_id
+        ');
+
+        $q->execute(array(':worker_id' => $id));
+
+        if (!$q->rowCount()) {
+            $_SESSION['tempdata']['errors'][] = 'Worker not found.';
+            return new RedirectView('/admin/workers.php');
+        }
 
         $_SESSION['tempdata']['info'][] = 'Worker deleted.';
         return new RedirectView('/admin/workers.php');

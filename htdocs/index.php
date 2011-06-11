@@ -28,6 +28,9 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     auth_fail();
 }
 
+// lets try to avoid undefined variables
+$force_getwork = false;
+
 $pdo = db_connect();
 
 $q = $pdo->prepare('
@@ -51,17 +54,17 @@ $q->closeCursor();
 
 function process_work($pdo, $worker_id, $pool_id, $response, $json_id) {
     $q = $pdo->prepare('
-        INSERT IGNORE INTO work_data
+        INSERT INTO work_data
 
         (worker_id, pool_id, data, time_requested)
             VALUES
-        (:worker_id, :pool_id, :data, UTC_TIMESTAMP())
+        (:worker_id, :pool_id, decode(:data,\'hex\'), NOW())
     ');
 
     if (!$q->execute(array(
         ':worker_id' => $worker_id,
         ':pool_id'   => $pool_id,
-        ':data'      => substr($response->result->data, 0, 152)))) {
+        ':data'      => substr($response->result->data,0,152)))) {
         json_error('Database error on INSERT into work_data: ' . json_encode($q->errorInfo()), $json_id);
     }
 }
@@ -180,7 +183,7 @@ if ($json->method != 'getwork') {
 $params = $json->params;
 
 if (is_array($params) && count($params) == 1) {
-    $data = substr($params[0], 0, 152);
+    $data = substr($params[0],0,152);
 
     $q = $pdo->prepare('
         SELECT
@@ -194,7 +197,7 @@ if (is_array($params) && count($params) == 1) {
             worker_pool wp,
             pool p
 
-        WHERE d.data = :data
+        WHERE d.data = decode(:data,\'hex\')
           AND d.worker_id = :worker_id
 
           AND d.pool_id = p.id
@@ -234,15 +237,17 @@ if (is_array($params) && count($params) == 1) {
     $q = $pdo->prepare('
         INSERT INTO submitted_work
 
-        (worker_id, pool_id, result, time)
+        (worker_id, pool_id, result, time, reason, work)
             VALUES
-        (:worker_id, :pool_id, :result, UTC_TIMESTAMP())
+        (:worker_id, :pool_id, :result, NOW(), :reason, decode(:work,\'hex\'))
     ');
 
     $q->execute(array(
         ':worker_id'    => $worker_id,
         ':pool_id'      => $row['pool_id'],
-        ':result'       => $result->result ? 1 : 0
+        ':result'       => $result->result ? 1 : 0,
+        ':reason'       => $result->error,
+        ':work'         => $params[0]
     ));
 
     json_response($result);
