@@ -55,7 +55,9 @@ CREATE TABLE submitted_work (
     worker_id integer NOT NULL,
     pool_id integer NOT NULL,
     result boolean NOT NULL,
-    "time" timestamp with time zone
+    "time" timestamp with time zone,
+    reason character varying(255),
+    work bytea
 );
 
 
@@ -85,7 +87,7 @@ ALTER SEQUENCE submitted_work_id_seq OWNED BY submitted_work.id;
 CREATE TABLE work_data (
     worker_id integer NOT NULL,
     pool_id integer NOT NULL,
-    data character(152) NOT NULL,
+    data bytea NOT NULL,
     time_requested timestamp with time zone NOT NULL
 );
 

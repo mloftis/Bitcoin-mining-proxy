@@ -4,13 +4,16 @@ Installing bitcoin-mining-proxy
 Setting up the database
 -----------------------
 
-bitcoin-mining-proxy currently requires a MySQL database server.  (PostgreSQL may be supported in a future release.)
+This particlar fork of bitcoin-mining-proxy has been beaten and whipped a little bit until it works on top of postgresql.  Use at your own risk, I (mloftis at github, mloftis@wgops.com ) have only done enough work to make it go.  There quite possibly are bugs in this fork.  I get python traceback errors occasionally from phoenix (1.48) when using my fork, I do not know if those problems exist in the parent fork since I never tried it!
 
+Some minor changes for PgSQL, there was one place where deletion wouldn't work, I also reduced all delete/join stuff to simple deletes, I've set the foreign keys to just default (restrict) on cascade right now until I get a better sense of whats going on with this software.
+
+1.  Create a PostGreSQL user for the proxy.
+2.  Create a database for the proxy, possibly setting the default owner to the user above.  You should create the database with UTF8 encoding -- createdb -e UTF8 poolproxy -- you may have to specify the template0 database in order to do this depending on your installations default encoding!
 Perform the following steps to set up the database:
+3.  Import the schema file at `database/schema-pg.sql` as the owner of the database.
 
-1.  Create a database for the proxy.
-2.  Create a MySQL user for the proxy, giving it the privileges SELECT, INSERT, UPDATE, DELETE, and LOCK TABLES on the proxy's database only.  (Optional, but recommended.)
-3.  Import the schema file at `database/schema.sql` into the database by using either the `mysql` command-line tool or another front-end like phpMyAdmin.
+Everything else here should apply.  Note that instead of storing hex characters in the database, I store the binary valueas as bytea, I also log the submitted data entirely, and any error code coming back from the upstream pool.  TODO - make the UI display this information.
 
 Configuring the proxy
 ---------------------
