@@ -9,7 +9,7 @@ This particlar fork of bitcoin-mining-proxy has been beaten and whipped a little
 Some minor changes for PgSQL, there was one place where deletion wouldn't work, I also reduced all delete/join stuff to simple deletes, I've set the foreign keys to just default (restrict) on cascade right now until I get a better sense of whats going on with this software.
 
 1.  Create a PostGreSQL user for the proxy.
-2.  Create a database for the proxy, possibly setting the default owner to the user above.  You should create the database with UTF8 encoding -- createdb -e UTF8 poolproxy -- you may have to specify the template0 database in order to do this depending on your installations default encoding!
+2.  Create a database for the proxy, possibly setting the default owner to the user above.  You should create the database with UTF8 encoding -- `createdb -e UTF8 poolproxy` -- you may have to specify the template0 database in order to do this depending on your installations default encoding!
 Perform the following steps to set up the database:
 3.  Import the schema file at `database/schema-pg.sql` as the owner of the database.
 
