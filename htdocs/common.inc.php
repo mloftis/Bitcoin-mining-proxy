@@ -82,7 +82,8 @@ function json_success($result, $id) {
 }
 
 function json_response($object) {
-    header('Content-Type: application/json-rpc');
+    #header('Content-Type: application/json-rpc');
+    header('Content-Type: application/json');
     echo json_encode($object);
 
     exit;

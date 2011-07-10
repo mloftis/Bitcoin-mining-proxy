@@ -237,9 +237,9 @@ if (is_array($params) && count($params) == 1) {
     $q = $pdo->prepare('
         INSERT INTO submitted_work
 
-        (worker_id, pool_id, result, time, reason, work)
+        (worker_id, pool_id, result, time, reason, work, retries)
             VALUES
-        (:worker_id, :pool_id, :result, NOW(), :reason, decode(:work,\'hex\'))
+        (:worker_id, :pool_id, :result, NOW(), :reason, decode(:work,\'hex\'), :retries)
     ');
 
     $q->execute(array(
@@ -247,7 +247,8 @@ if (is_array($params) && count($params) == 1) {
         ':pool_id'      => $row['pool_id'],
         ':result'       => $result->result ? 1 : 0,
         ':reason'       => $result->error,
-        ':work'         => $params[0]
+        ':work'         => $params[0],
+        ':retries'      => 10 - $i
     ));
 
     json_response($result);
@@ -269,7 +270,7 @@ $q = $pdo->prepare('
       AND wp.enabled
       AND p.enabled
 
-    ORDER BY wp.priority DESC
+    ORDER BY wp.priority ASC
 ');
 
 $q->execute(array(':worker' => $worker_id));

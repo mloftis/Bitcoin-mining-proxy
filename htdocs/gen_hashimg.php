@@ -20,7 +20,7 @@
  */
 
 require_once(dirname(__FILE__) . '/common.inc.php');
-
+$BTC_PROXY['average_interval'] = 900;
 $pdo = db_connect();
 
 $res = db_query($pdo,'select count(id)::float * 4294967296 / '.

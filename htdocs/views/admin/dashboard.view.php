@@ -43,6 +43,9 @@ class AdminDashboardView
         <th>Pool</th>
         <th>Result</th>
         <th>Time</th>
+        <?php if (array_key_exists('retries',$rows[0])): ?>
+        <th>Retries</th>
+        <?php endif; ?>
     </tr>
     <?php foreach ($rows as $row) { ?>
     <tr class="<?php echo $row['result'] ? 'accepted' : 'rejected' ?>">
@@ -50,6 +53,9 @@ class AdminDashboardView
         <td><?php echo htmlspecialchars($row['pool']) ?></td>
         <td><?php echo $row['result'] ? 'Accepted' :'Rejected' ?></td>
         <td><?php echo htmlspecialchars(format_date($row['time'])) ?></td>
+        <?php if (array_key_exists('retries',$row)): ?>
+        <td><?php echo $row['retries'] ? $row['retries'] : 0 ?></td>
+        <?php endif; ?>
     </tr>
     <?php } ?>
 <?php
