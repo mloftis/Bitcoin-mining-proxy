@@ -57,7 +57,8 @@ CREATE TABLE submitted_work (
     result boolean NOT NULL,
     "time" timestamp with time zone,
     reason character varying(255),
-    work bytea
+    work bytea,
+    retries integer
 );
 
 
@@ -88,8 +89,28 @@ CREATE TABLE work_data (
     worker_id integer NOT NULL,
     pool_id integer NOT NULL,
     data bytea NOT NULL,
-    time_requested timestamp with time zone NOT NULL
+    time_requested timestamp with time zone NOT NULL,
+    id integer NOT NULL
 );
+
+
+--
+-- Name: work_data_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE work_data_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: work_data_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE work_data_id_seq OWNED BY work_data.id;
 
 
 --
@@ -154,6 +175,13 @@ ALTER TABLE submitted_work ALTER COLUMN id SET DEFAULT nextval('submitted_work_i
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE work_data ALTER COLUMN id SET DEFAULT nextval('work_data_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE worker ALTER COLUMN id SET DEFAULT nextval('worker_id_seq'::regclass);
 
 
@@ -210,6 +238,13 @@ ALTER TABLE ONLY worker_pool
 --
 
 CREATE INDEX dashboard_status_index ON submitted_work USING btree (worker_id, result, "time");
+
+
+--
+-- Name: submitted_work_timeidx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX submitted_work_timeidx ON submitted_work USING btree ("time");
 
 
 --
